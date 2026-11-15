@@ -6,6 +6,7 @@ My personal collection of reusable agent skills for Claude Code, Cursor, Codex, 
 
 - [General Learning Coach](./general-learning-coach/) — Helps me learn through questions and progressive hints instead of jumping straight to answers.
 - [Data Science Research Coach](./ds-research-coach/) — Helps frame ML and business problems, investigate model behavior, design rigorous experiments, and develop independent DS judgment across competitions, research, and work.
+- [Code Ownership](./code-ownership/) — Keeps agent-written changes reviewable with one-slice-at-a-time checkpoints, code-tracing questions, and hands-on practice. [Setup](./code-ownership/README.md).
 
 Each skill is a folder containing `SKILL.md` and, optionally, reference files. Install the **whole folder**, not just `SKILL.md`, to preserve its references.
 
@@ -30,27 +31,27 @@ Choose **global** installation (available in your other projects on this compute
 | **Cursor** | `~/.cursor/skills/` | `<project>/.cursor/skills/` |
 | **Codex** | `~/.agents/skills/` | `<project>/.agents/skills/` |
 
-For **global** installation of both skills, run the commands for your chosen agent **from inside the cloned `yegi-skills` directory**.
+For **global** installation of all three skills, run the commands for your chosen agent **from inside the cloned `yegi-skills` directory**.
 
 **Claude Code**
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -R general-learning-coach ds-research-coach ~/.claude/skills/
+cp -R general-learning-coach ds-research-coach code-ownership ~/.claude/skills/
 ```
 
 **Cursor**
 
 ```bash
 mkdir -p ~/.cursor/skills
-cp -R general-learning-coach ds-research-coach ~/.cursor/skills/
+cp -R general-learning-coach ds-research-coach code-ownership ~/.cursor/skills/
 ```
 
 **Codex**
 
 ```bash
 mkdir -p ~/.agents/skills
-cp -R general-learning-coach ds-research-coach ~/.agents/skills/
+cp -R general-learning-coach ds-research-coach code-ownership ~/.agents/skills/
 ```
 
 To install just one skill, replace the two names in the `cp` command with the name you want.
