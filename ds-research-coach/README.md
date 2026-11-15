@@ -1,19 +1,16 @@
-# Data Science Thinking & Research Coach — Codex Skill
+# Data Science Thinking & Research Coach
 
 A reusable learning-first partner for **professional Data Science**, applied ML research, competitions and hackathons. Helps frame problems, understand data, build hypotheses, design discriminating tests and turn evidence into decisions. It does not default to a list of architectures or ensembles.
 
-## Install globally (all projects)
+## Install in Claude Code, Cursor, or Codex
 
-Clone the repository, then:
+See the [repository setup instructions](../README.md#setup) for global and project-local installation in all three agents. Copy the entire skill folder, including its `references/` directory.
 
-```bash
-mkdir -p ~/.agents/skills
-cp -R ds-research-coach ~/.agents/skills/
-```
-
-Or install in a single project at `.agents/skills/ds-research-coach/`.
+For Codex specifically, the global location is `~/.agents/skills/ds-research-coach/`.
 
 ## Kickoff (works in any DS repository)
+
+Invoke by name in your agent (in Codex, `$ds-research-coach`):
 
 ```text
 $ds-research-coach Help me approach this Data Science problem systematically. Inspect relevant project context, distinguish facts from assumptions, and help me frame the objective and identify the most consequential unknown. Coach my reasoning, one question at a time; don't jump straight to modeling tricks.
