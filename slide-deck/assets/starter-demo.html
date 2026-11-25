@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Demo · [Feature]</title>
+<style>
+  :root {
+    /* Background and neutrals */
+    --bg:        #FBF9F4;
+    --paper:     #FFFFFF;
+    --ink:       #141414;
+    --phone:     #0A0A0A;
+    --dim:       #717171;
+    --muted:     #999999;
+    --hairline:  #E8E4DC;
+
+    /* PRIMARY - red for the key moment */
+    --red:       #E5242F;
+    --red-soft:  #FDE8EA;
+
+    /* SECONDARY - orange/amber for product chrome only */
+    --orange:    #E89B3F;
+    --amber:     #D9A33A;
+    --rust:      #C9531F;
+    --rust-soft: #FFF0E6;
+
+    --green:     #2D7A4F;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); overflow: hidden;
+               font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+               color: var(--ink); }
+
+  /* ============ CANVAS ============ */
+  .stage {
+    width: 1920px; height: 1080px;
+    position: relative;
+    transform-origin: top left;
+  }
+  /* Scale stage to fit viewport */
+  @media (max-width: 1920px) {
+    body { display: flex; align-items: center; justify-content: center; }
+    .stage { transform: scale(var(--scale, 1)); }
+  }
+
+  /* ============ PHONE REGION (left) ============ */
+  .phone-region {
+    position: absolute; top: 0; left: 0;
+    width: 780px; height: 1080px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phone {
+    width: 380px; height: 800px;
+    background: var(--phone);
+    border-radius: 50px;
+    padding: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    background: var(--paper);
+    border-radius: 38px;
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute; top: 18px; left: 50%;
+    transform: translateX(-50%);
+    width: 110px; height: 30px;
+    background: var(--phone);
+    border-radius: 18px;
+    z-index: 20;
+  }
+  .phone-statusbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 32px 0;
+    font-size: 15px; font-weight: 600;
+    z-index: 15;
+  }
+  .phone-statusbar .right-icons { display: flex; gap: 6px; align-items: center; }
+  .phone-content {
+    position: absolute; top: 60px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+  }
+
+  /* ============ NARRATION REGION (right) ============ */
+  .narration {
+    position: absolute; top: 0; left: 780px; right: 0; bottom: 80px;
+    padding: 80px 100px 60px 40px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .eyebrow {
+    display: flex; align-items: center; gap: 12px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 18px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 24px;
+  }
+  .eyebrow::before {
+    content: ""; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--red);
+  }
+
+  h1 {
+    font-size: 80px; font-weight: 800;
+    line-height: 1.05; letter-spacing: -1.5px;
+    margin-bottom: 56px;
+  }
+  h1 .accent { color: var(--red); display: block; }
+
+  /* ----- Steps ----- */
+  .steps { display: flex; flex-direction: column; gap: 28px; }
+  .step {
+    display: grid; grid-template-columns: 70px 1fr;
+    gap: 24px; align-items: start;
+    transition: opacity 0.35s ease;
+  }
+  .step.pending { opacity: 0.32; }
+  .step.active  { opacity: 1; }
+  .step.done    { opacity: 0.45; }
+
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-weight: 800; font-size: 18px;
+    color: white;
+    background: #C8C8C8;
+    transition: background 0.35s ease;
+  }
+  .step.active .step-num { background: var(--red); }
+  .step.done .step-num { background: var(--ink); }
+  .step.done .step-num .num-text { display: none; }
+  .step.done .step-num::before { content: "✓"; font-size: 22px; }
+
+  .step-name {
+    font-size: 32px; font-weight: 700;
+    letter-spacing: -0.5px; line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .step-desc {
+    font-size: 18px; color: var(--dim);
+    line-height: 1.45;
+  }
+
+  /* ----- Brand badge ----- */
+  .brand-tag {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 60px;
+  }
+  .brand-mark {
+    width: 38px; height: 38px;
+    background: var(--red);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 15px;
+    letter-spacing: -0.5px;
+  }
+  .brand-text {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 14px; color: var(--dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ============ SCRUBBER (bottom) ============ */
+  .scrubber {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 60px;
+    display: flex; align-items: center; gap: 18px;
+    padding: 0 32px;
+    border-top: 1px solid var(--hairline);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 13px; color: var(--muted);
+  }
+  body.recording .scrubber { display: none; }
+  .scrubber button {
+    background: none; border: none; cursor: pointer;
+    color: var(--ink); font-size: 16px; padding: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .scrubber-progress {
+    flex: 1; height: 4px; background: var(--hairline);
+    border-radius: 2px; position: relative;
+  }
+  .scrubber-fill {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+  }
+  .scrubber-thumb {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 14px; height: 14px;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+
+  /* ============ ANIMATION TIMINGS ============ */
+  /* The demo plays for 9 seconds total, then loops.
+     The JS at the bottom drives every state change by reading `elapsed`.
+
+     T=0.0   step 01 active, phone shows initial state
+     T=3.0   step 01 → done, step 02 → active, phone shows mechanism
+     T=5.0   step 02 → done, step 03 → active, phone shows payoff
+     T=9.0   loop restart                                              */
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- PHONE REGION ===================================== -->
+  <div class="phone-region">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-statusbar">
+          <div>9:41</div>
+          <div class="right-icons">
+            <!-- signal / wifi / battery glyphs - simple stand-ins -->
+            <span>●●●●</span> <span>📶</span> <span>🔋</span>
+          </div>
+        </div>
+        <div class="phone-content" id="phoneContent">
+          <!-- Fill this with the feature-specific UI -->
+          <!-- Animations live inside here -->
+          <!-- Example: <div class="search-results"> ... </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NARRATION REGION ================================= -->
+  <div class="narration">
+
+    <div class="eyebrow">[FEATURE NAME]</div>
+
+    <h1>
+      [First line setup]
+      <span class="accent">[red payoff line.]</span>
+    </h1>
+
+    <div class="steps">
+      <div class="step active" id="step1">
+        <div class="step-num"><span class="num-text">01</span></div>
+        <div>
+          <div class="step-name">[Step 1 name]</div>
+          <div class="step-desc">[1-2 sentence description.]</div>
+        </div>
+      </div>
+
+      <div class="step pending" id="step2">
+        <div class="step-num"><span class="num-text">02</span></div>
+        <div>
+          <div class="step-name">[Step 2 name]</div>
+          <div class="step-desc">[1-2 sentence description.]</div>
+        </div>
+      </div>
+
+      <div class="step pending" id="step3">
+        <div class="step-num"><span class="num-text">03</span></div>
+        <div>
+          <div class="step-name">[Step 3 name]</div>
+          <div class="step-desc">[1-2 sentence description.]</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-tag">
+      <div class="brand-mark"></div>
+      <div class="brand-text">[Product name] · [status tag]</div>
+    </div>
+
+  </div>
+
+  <!-- SCRUBBER ========================================= -->
+  <div class="scrubber">
+    <button id="restartBtn" title="Restart">⏮</button>
+    <button id="playPauseBtn" title="Play/pause">⏸</button>
+    <span id="currentTime">0:00.00</span>
+    <div class="scrubber-progress">
+      <div class="scrubber-fill" id="scrubFill"></div>
+      <div class="scrubber-thumb" id="scrubThumb"></div>
+    </div>
+    <span>0:09.00</span>
+  </div>
+
+</div>
+
+<script>
+// =========================================================
+// Demo timeline driver
+// =========================================================
+const DURATION = 9.0;          // total seconds, loops at end
+const STEP_2_AT = 3.0;         // step 01 → done, step 02 → active
+const STEP_3_AT = 5.0;         // step 02 → done, step 03 → active
+
+let startTime = performance.now();
+let elapsed = 0;
+let paused = false;
+
+const step1 = document.getElementById('step1');
+const step2 = document.getElementById('step2');
+const step3 = document.getElementById('step3');
+const fill = document.getElementById('scrubFill');
+const thumb = document.getElementById('scrubThumb');
+const timeLabel = document.getElementById('currentTime');
+const playPauseBtn = document.getElementById('playPauseBtn');
+
+function setStepState(t) {
+  // Determine which step is active at time t
+  if (t < STEP_2_AT) {
+    step1.className = 'step active';
+    step2.className = 'step pending';
+    step3.className = 'step pending';
+  } else if (t < STEP_3_AT) {
+    step1.className = 'step done';
+    step2.className = 'step active';
+    step3.className = 'step pending';
+  } else {
+    step1.className = 'step done';
+    step2.className = 'step done';
+    step3.className = 'step active';
+  }
+}
+
+function tick(now) {
+  if (!paused) {
+    elapsed = ((now - startTime) / 1000) % DURATION;
+  }
+
+  // Update step states
+  setStepState(elapsed);
+
+  // Update scrubber
+  const pct = (elapsed / DURATION) * 100;
+  fill.style.width = pct + '%';
+  thumb.style.left = pct + '%';
+
+  // Update time label
+  const m = Math.floor(elapsed / 60);
+  const s = (elapsed % 60).toFixed(2).padStart(5, '0');
+  timeLabel.textContent = `${m}:${s}`;
+
+  requestAnimationFrame(tick);
+}
+
+playPauseBtn.addEventListener('click', () => {
+  if (paused) {
+    paused = false;
+    startTime = performance.now() - (elapsed * 1000);
+    playPauseBtn.textContent = '⏸';
+  } else {
+    paused = true;
+    playPauseBtn.textContent = '▶';
+  }
+});
+
+document.getElementById('restartBtn').addEventListener('click', () => {
+  startTime = performance.now();
+  elapsed = 0;
+  paused = false;
+  playPauseBtn.textContent = '⏸';
+});
+
+requestAnimationFrame(tick);
+
+// Scale to fit viewport
+function rescale() {
+  const stage = document.getElementById('stage');
+  const sx = window.innerWidth / 1920;
+  const sy = window.innerHeight / 1080;
+  const s = Math.min(sx, sy);
+  stage.style.setProperty('--scale', s);
+}
+window.addEventListener('resize', rescale);
+rescale();
+
+// =========================================================
+// Feature-specific animations go below this line
+// =========================================================
+// Imperatively update the DOM in the tick() function above
+// based on `elapsed`. Example:
+//
+//   if (elapsed >= 3.0 && !pillShown) {
+//     phoneContent.querySelector('.personalizing-pill').classList.add('visible');
+//     pillShown = true;
+//   }
+//   // Reset all sticky flags when the demo loops:
+//   if (elapsed < 0.1) { pillShown = false; /* ... */ }
+</script>
+
+</body>
+</html>
