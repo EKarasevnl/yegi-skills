@@ -4,6 +4,7 @@ My personal collection of reusable agent skills for Claude Code, Cursor, Codex, 
 
 ## Skills
 
+- [Slide Deck](./slide-deck/) — Builds presentation-ready HTML slide decks, one-pagers, and short animated demos.
 - [General Learning Coach](./general-learning-coach/) — Helps me learn through questions and progressive hints instead of jumping straight to answers.
 - [Data Science Research Coach](./ds-research-coach/) — Helps frame ML and business problems, investigate model behavior, design rigorous experiments, and develop independent DS judgment across competitions, research, and work.
 - [Code Ownership](./code-ownership/) — Keeps agent-written changes reviewable with one-slice-at-a-time checkpoints, code-tracing questions, and hands-on practice. [Setup](./code-ownership/README.md).
@@ -31,27 +32,27 @@ Choose **global** installation (available in your other projects on this compute
 | **Cursor** | `~/.cursor/skills/` | `<project>/.cursor/skills/` |
 | **Codex** | `~/.agents/skills/` | `<project>/.agents/skills/` |
 
-For **global** installation of all three skills, run the commands for your chosen agent **from inside the cloned `yegi-skills` directory**.
+For **global** installation of all four skills, run the commands for your chosen agent **from inside the cloned `yegi-skills` directory**.
 
 **Claude Code**
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -R general-learning-coach ds-research-coach code-ownership ~/.claude/skills/
+cp -R general-learning-coach ds-research-coach code-ownership slide-deck ~/.claude/skills/
 ```
 
 **Cursor**
 
 ```bash
 mkdir -p ~/.cursor/skills
-cp -R general-learning-coach ds-research-coach code-ownership ~/.cursor/skills/
+cp -R general-learning-coach ds-research-coach code-ownership slide-deck ~/.cursor/skills/
 ```
 
 **Codex**
 
 ```bash
 mkdir -p ~/.agents/skills
-cp -R general-learning-coach ds-research-coach code-ownership ~/.agents/skills/
+cp -R general-learning-coach ds-research-coach code-ownership slide-deck ~/.agents/skills/
 ```
 
 To install just one skill, replace the two names in the `cp` command with the name you want.
@@ -68,6 +69,12 @@ Open a project in your agent, then explicitly invoke a skill or ask a question t
 
 ```text
 Use the general-learning-coach skill. Help me reason through this problem with one question at a time and avoid spoilers.
+```
+
+**Slide Deck**
+
+```text
+Use the slide-deck skill. Create a clear HTML slide deck for this topic, following the skill's design and render-check process.
 ```
 
 **Data Science Research Coach**
